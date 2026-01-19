@@ -10,7 +10,6 @@ test.describe('test with hooks', () => {
     test.beforeEach('login', async ({ page }) => {
         const Login = new LoginPage(page)
 
-        await Login.GoToLoginPage()
         await expect(page).toHaveTitle('Swag Labs')
         await Login.Login()
         await expect(page.locator('[data-test="title"]')).toHaveText('Products');

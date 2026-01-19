@@ -64,17 +64,24 @@ test.describe('tests with hooks', () => {
         expect(await page.screenshot()).toMatchSnapshot('checkout_information_page.png');
     })
 
-    test('checkout overview page snapshot', async ({page}) =>{
+    test('Checkout', async ({ page }) => {
         const Inventory = new InventoryPage(page)
         const Cart = new CartPage(page)
         const Checkout = new CheckoutPage(page)
 
         await Inventory.AddItemToCart(env.products[0])
         await Inventory.AddItemToCart(env.products[1])
+
         await Inventory.GoToCart()
+        await expect(page.locator('[data-test="title"]')).toHaveText("Your Cart")
         await Cart.GoToCheckout()
+        await expect(page.locator('[data-test="title"]')).toHaveText("Checkout: Your Information")
         await Checkout.FillInformation(env.checkout_first_name, env.checkout_last_name, env.checkout_postal_CODE)
         await Checkout.Continue()
-        expect(await page.screenshot()).toMatchSnapshot('Checkout_overview_page.png');
+        await expect(page.locator('[data-test="title"]')).toHaveText("Checkout: Overview")
+        await Checkout.Finish()
+        await expect(page.locator('[data-test="complete-header"]')).toHaveText("Thank you for your order!")
+        await Checkout.BackHome()
+        await expect(page.locator('[data-test="title"]')).toHaveText("Products")
     })
 })
