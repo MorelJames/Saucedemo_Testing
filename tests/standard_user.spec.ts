@@ -3,15 +3,15 @@ import { LoginPage } from '../pages/login'
 import { InventoryPage } from '../pages/inventory'
 import { CartPage } from '../pages/cart'
 import { CheckoutPage } from '../pages/checkout'
+import { env } from './helpers/env';
 
 test.describe('test with hooks', () => {
 
     test.beforeEach('login', async ({ page }) => {
         const Login = new LoginPage(page)
 
-        await Login.GoToLoginPage()
         await expect(page).toHaveTitle('Swag Labs')
-        await Login.Login('standard_user', 'secret_sauce')
+        await Login.Login()
         await expect(page.locator('[data-test="title"]')).toHaveText('Products');
     })
 
@@ -24,21 +24,19 @@ test.describe('test with hooks', () => {
     test('Adding and removing items', async ({ page }) => {
         const Inventory = new InventoryPage(page)
 
-        const items = ['sauce-labs-backpack', 'sauce-labs-bike-light', 'sauce-labs-bolt-t-shirt', 'sauce-labs-fleece-jacket', 'sauce-labs-onesie', 'test.allthethings()-t-shirt-(red)']
-        await Inventory.AddItemToCart(items[0])
-        await expect(page.locator('[data-test="remove-' + items[0] + '"]')).toBeVisible()
-        await Inventory.RemoveItemFromCart(items[0])
-        await expect(page.locator('[data-test="add-to-cart-' + items[0] + '"]')).toBeVisible()
+        await Inventory.AddItemToCart(env.products[0])
+        await expect(page.locator('[data-test="remove-' + env.products[0] + '"]')).toBeVisible()
+        await Inventory.RemoveItemFromCart(env.products[0])
+        await expect(page.locator('[data-test="add-to-cart-' + env.products[0] + '"]')).toBeVisible()
     })
 
     test('Persistence of cart after reload', async ({ page }) => {
         const Inventory = new InventoryPage(page)
         const Cart = new CartPage(page)
-        var items = ['sauce-labs-backpack', 'sauce-labs-bike-light', 'sauce-labs-bolt-t-shirt', 'sauce-labs-fleece-jacket', 'sauce-labs-onesie', 'test.allthethings()-t-shirt-(red)']
 
-        await Inventory.AddItemToCart(items[0])
-        await Inventory.AddItemToCart(items[2])
-        await Inventory.AddItemToCart(items[4])
+        await Inventory.AddItemToCart(env.products[0])
+        await Inventory.AddItemToCart(env.products[2])
+        await Inventory.AddItemToCart(env.products[4])
         await Inventory.GoToCart()
 
         const itemsBeforeReload: string[] = await Cart.GetAllItemsInCart()
@@ -53,17 +51,16 @@ test.describe('test with hooks', () => {
         const Login = new LoginPage(page)
         const Inventory = new InventoryPage(page)
         const Cart = new CartPage(page)
-        var items = ['sauce-labs-backpack', 'sauce-labs-bike-light', 'sauce-labs-bolt-t-shirt', 'sauce-labs-fleece-jacket', 'sauce-labs-onesie', 'test.allthethings()-t-shirt-(red)']
 
-        await Inventory.AddItemToCart(items[0])
-        await Inventory.AddItemToCart(items[2])
-        await Inventory.AddItemToCart(items[4])
+        await Inventory.AddItemToCart(env.products[0])
+        await Inventory.AddItemToCart(env.products[2])
+        await Inventory.AddItemToCart(env.products[4])
         await Inventory.GoToCart()
 
         const itemsBeforeReload: string[] = await Cart.GetAllItemsInCart()
         await page.getByRole('button', { name: 'Open Menu' }).click();
         await page.locator('[data-test="logout-sidebar-link"]').click();
-        await Login.Login('standard_user', 'secret_sauce')
+        await Login.Login()
         await Inventory.GoToCart()
         const itemsAfterLogout: string[] = await Cart.GetAllItemsInCart()
 
@@ -75,16 +72,15 @@ test.describe('test with hooks', () => {
         const Inventory = new InventoryPage(page)
         const Cart = new CartPage(page)
         const Checkout = new CheckoutPage(page)
-        var items = ['sauce-labs-backpack', 'sauce-labs-bike-light', 'sauce-labs-bolt-t-shirt', 'sauce-labs-fleece-jacket', 'sauce-labs-onesie', 'test.allthethings()-t-shirt-(red)']
 
-        await Inventory.AddItemToCart(items[0])
-        await Inventory.AddItemToCart(items[1])
+        await Inventory.AddItemToCart(env.products[0])
+        await Inventory.AddItemToCart(env.products[1])
 
         await Inventory.GoToCart()
         await expect(page.locator('[data-test="title"]')).toHaveText("Your Cart")
         await Cart.GoToCheckout()
         await expect(page.locator('[data-test="title"]')).toHaveText("Checkout: Your Information")
-        await Checkout.FillInformation('standard', 'user', 'myAwesomePostalCode9999')
+        await Checkout.FillInformation(env.checkout_first_name, env.checkout_last_name, env.checkout_postal_CODE)
         await Checkout.Continue()
         await expect(page.locator('[data-test="title"]')).toHaveText("Checkout: Overview")
         await Checkout.Finish()
@@ -97,10 +93,9 @@ test.describe('test with hooks', () => {
         const Inventory = new InventoryPage(page)
         const Cart = new CartPage(page)
         const Checkout = new CheckoutPage(page)
-        var items = ['sauce-labs-backpack', 'sauce-labs-bike-light', 'sauce-labs-bolt-t-shirt', 'sauce-labs-fleece-jacket', 'sauce-labs-onesie', 'test.allthethings()-t-shirt-(red)']
 
-        await Inventory.AddItemToCart(items[0])
-        await Inventory.AddItemToCart(items[1])
+        await Inventory.AddItemToCart(env.products[0])
+        await Inventory.AddItemToCart(env.products[1])
         await Inventory.GoToCart()
         await Cart.GoToCheckout()
         await Checkout.Continue()
@@ -113,7 +108,9 @@ test('login with wrong information', async ({ page }) => {
     const Login = new LoginPage(page)
 
     await Login.GoToLoginPage()
-    await Login.Login('standard_user', 'wrong_password')
+    await page.locator('[data-test="username"]').fill('wrong_user');
+    await page.locator('[data-test="password"]').fill('wrong_password');
+    await page.locator('[data-test="login-button"]').click();
     await expect(page.locator('[data-test="error"]')).toBeVisible();
 })
 

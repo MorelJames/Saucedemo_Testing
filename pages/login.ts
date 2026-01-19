@@ -1,4 +1,5 @@
 import { Locator, Page } from "@playwright/test";
+import { env } from '../tests/helpers/env';
 
 export class LoginPage {
     page: Page
@@ -15,9 +16,9 @@ export class LoginPage {
     async GoToLoginPage() {
         await this.page.goto("https://www.saucedemo.com/")
     }
-    async Login(username: string, password: string) {
-        await this.username_textbox.fill(username)
-        await this.password_textbox.fill(password)
+    async Login() {
+        await this.username_textbox.fill(env.username)
+        await this.password_textbox.fill(env.password)
         await this.login_Btn.click()
     }
 }
