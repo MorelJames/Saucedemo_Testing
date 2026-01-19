@@ -13,9 +13,7 @@ export class LoginPage {
         this.password_textbox = page.locator('[data-test="password"]')
         this.login_Btn = page.locator('[data-test="login-button"]')
     }
-    async GoToLoginPage() {
-        await this.page.goto("https://www.saucedemo.com/")
-    }
+
     async Login() {
         await this.username_textbox.fill(env.username)
         await this.password_textbox.fill(env.password)
