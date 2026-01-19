@@ -21,25 +21,25 @@ export class CheckoutPage {
         this.backHome_Btn = this.page.locator('[data-test="back-to-products"]')
     }
 
-    async FillInformation(firstName: string, lastName: string, postalCode: string){
+    async FillInformation(firstName: string, lastName: string, postalCode: string) {
         await this.first_Name.fill(firstName)
         await this.last_name.fill(lastName)
         await this.postal_Code.fill(postalCode)
     }
 
-    async Continue(){
+    async Continue() {
         await this.continue_Btn.click()
     }
 
-    async Finish(){
+    async Finish() {
         await this.finish_Btn.click()
     }
 
-    async Cancel(){
+    async Cancel() {
         await this.cancel_Btn.click()
     }
 
-    async BackHome(){
+    async BackHome() {
         await this.backHome_Btn.click()
     }
 }
