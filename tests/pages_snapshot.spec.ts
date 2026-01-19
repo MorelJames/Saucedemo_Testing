@@ -3,6 +3,8 @@ import { LoginPage } from '../pages/login'
 import { InventoryPage } from '../pages/inventory'
 import { CartPage } from '../pages/cart'
 import { CheckoutPage } from '../pages/checkout'
+import { env } from './helpers/env';
+
 
 test('login snapshot', async ({ page }) => {
     const Login = new LoginPage(page)
@@ -16,7 +18,7 @@ test.describe('tests with hooks', () => {
         const Login = new LoginPage(page)
 
         await Login.GoToLoginPage()
-        await Login.Login('standard_user', 'secret_sauce')
+        await Login.Login()
     })
 
     test.afterEach('logout', async ({ page }) => {
@@ -35,8 +37,8 @@ test.describe('tests with hooks', () => {
 
     test('inventory page with products added snapshot', async ({page})=>{
         const Inventory = new InventoryPage(page)
-        await Inventory.AddItemToCart('sauce-labs-backpack')
-        await Inventory.AddItemToCart('sauce-labs-bike-light')
+        await Inventory.AddItemToCart(env.products[0])
+        await Inventory.AddItemToCart(env.products[1])
         expect(await page.screenshot()).toMatchSnapshot('inventory_with_products_added_page.png');
     })
 
@@ -48,8 +50,8 @@ test.describe('tests with hooks', () => {
 
     test('checkout page with products snapshot', async ({ page }) => {
         const Inventory = new InventoryPage(page)
-        await Inventory.AddItemToCart('sauce-labs-backpack')
-        await Inventory.AddItemToCart('sauce-labs-bike-light')
+        await Inventory.AddItemToCart(env.products[0])
+        await Inventory.AddItemToCart(env.products[1])
         await Inventory.GoToCart()
         expect(await page.screenshot()).toMatchSnapshot('checkout_page_with_products.png');
     })
@@ -66,13 +68,12 @@ test.describe('tests with hooks', () => {
         const Inventory = new InventoryPage(page)
         const Cart = new CartPage(page)
         const Checkout = new CheckoutPage(page)
-        var items = ['sauce-labs-backpack', 'sauce-labs-bike-light', 'sauce-labs-bolt-t-shirt', 'sauce-labs-fleece-jacket', 'sauce-labs-onesie', 'test.allthethings()-t-shirt-(red)']
 
-        await Inventory.AddItemToCart('sauce-labs-backpack')
-        await Inventory.AddItemToCart('sauce-labs-bike-light')
+        await Inventory.AddItemToCart(env.products[0])
+        await Inventory.AddItemToCart(env.products[1])
         await Inventory.GoToCart()
         await Cart.GoToCheckout()
-        await Checkout.FillInformation('standard', 'user', 'myAwesomePostalCode9999')
+        await Checkout.FillInformation(env.checkout_first_name, env.checkout_last_name, env.checkout_postal_CODE)
         await Checkout.Continue()
         expect(await page.screenshot()).toMatchSnapshot('Checkout_overview_page.png');
     })
