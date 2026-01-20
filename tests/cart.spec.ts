@@ -51,5 +51,33 @@ test.describe('cart test', () => {
         const isEqual = itemsBeforeReload.length == itemsAfterLogout.length && itemsBeforeReload.every(item => itemsAfterLogout.includes(item))
         expect(isEqual).toBe(true);
     })
+
+    test('items added correctly in the cart', async ({ page }) => {
+        const addedItems = [ env.products[0], env.products[2], env.products[4]];
+
+        const cartItems = page.locator('[data-test="inventory-item"]');
+        const count = await cartItems.count();
+
+        expect(count, 'Cart should not be empty').toBeGreaterThan(0);
+
+        for (let i = 0; i < count; i++) {
+            const item = cartItems.nth(i);
+
+            const rawName = await item
+                .locator('[data-test="inventory-item-name"]')
+                .textContent();
+
+            expect(rawName, `Missing name for cart item at index ${i}`).not.toBeNull();
+
+            const formattedName = rawName!
+                .toLowerCase()
+                .replace(/\s+/g, '-');
+
+            expect(
+                addedItems,
+                `Unexpected cart item: ${formattedName}`
+            ).toContain(formattedName);
+        }
+    });
 })
 
