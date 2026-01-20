@@ -16,10 +16,16 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [['html'],['github']],
+  reporter: [['html'], ['github']],
   use: {
     baseURL: 'https://www.saucedemo.com/',
     trace: 'on-first-retry',
+    viewport: { width: 1280, height: 720 },
+  },
+  expect: {
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.01,
+    },
   },
 
   /* Configure projects for major browsers */
