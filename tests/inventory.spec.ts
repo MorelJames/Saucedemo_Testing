@@ -64,5 +64,32 @@ test.describe('inventory test', () => {
         const expectedSortedPrices = [...prices].sort((a, b) => b - a);
         expect(prices).toEqual(expectedSortedPrices);
     });
+
+    test.only('Cart badge updates when removing an item from the inventory page', async ({ page }) => {
+        const Inventory = new InventoryPage(page)
+        await Inventory.AddItemToCart(env.products[0])
+        await Inventory.AddItemToCart(env.products[2])
+        await Inventory.AddItemToCart(env.products[3])
+        const badgeCartPage = page.locator('.shopping_cart_badge');
+        await expect(badgeCartPage, 'Cart badge should be visible when cart has items').toBeVisible();
+
+        await page.pause()
+        const badgeBeforeText = await badgeCartPage.textContent();
+        expect(badgeBeforeText).not.toBeNull();
+
+        const badgeBefore = parseInt(badgeBeforeText!.trim(), 10);
+        expect(badgeBefore, 'Badge count should be > 0').toBeGreaterThan(0);
+
+        const removeButtons = page.locator('button:has-text("Remove")');
+        const removeCount = await removeButtons.count();
+        expect(removeCount, 'Expected at least one "Remove" button on inventory page').toBeGreaterThan(0);
+
+        await removeButtons.first().click();
+        if (badgeBefore === 1) {
+            await expect(page.locator('.shopping_cart_badge')).toHaveCount(0);
+        } else {
+            await expect(page.locator('.shopping_cart_badge')).toHaveText(String(badgeBefore - 1));
+        }
+    });
 })
 
