@@ -51,5 +51,41 @@ test.describe('cart test', () => {
         const isEqual = itemsBeforeReload.length == itemsAfterLogout.length && itemsBeforeReload.every(item => itemsAfterLogout.includes(item))
         expect(isEqual).toBe(true);
     })
+
+    test('items added correctly in the cart', async ({ page }) => {
+        const addedItems = [env.products[0], env.products[2], env.products[4]];
+
+        const cartItems = page.locator('[data-test="inventory-item"]');
+        const count = await cartItems.count();
+
+        expect(count, 'Cart should not be empty').toBeGreaterThan(0);
+
+        for (let i = 0; i < count; i++) {
+            const item = cartItems.nth(i);
+            const rawName = await item.locator('[data-test="inventory-item-name"]').textContent();
+            expect(rawName, `Missing name for cart item at index ${i}`).not.toBeNull();
+            const formattedName = rawName!.toLowerCase().replace(/\s+/g, '-');
+            expect(addedItems, `Unexpected cart item: ${formattedName}`).toContain(formattedName);
+        }
+    })
+
+    test('Cart badge updates when removing an item from the cart page', async ({ page }) => {
+        const badge = page.locator('.shopping_cart_badge');
+        await page.pause()
+        await expect(badge, 'Cart badge should be visible when cart has items').toBeVisible();
+
+        const badgeBeforeText = await badge.textContent();
+        expect(badgeBeforeText).not.toBeNull();
+
+        const badgeBefore = parseInt(badgeBeforeText!.trim(), 10);
+        expect(badgeBefore, 'Badge count should be > 0').toBeGreaterThan(0);
+        const firstCartItem = page.locator('.cart_item').first();
+        await firstCartItem.locator('button:has-text("Remove")').click();
+        if (badgeBefore === 1) {
+            await expect(page.locator('.shopping_cart_badge')).toHaveCount(0);
+        } else {
+            await expect(page.locator('.shopping_cart_badge')).toHaveText(String(badgeBefore - 1));
+        }
+    });
 })
 
