@@ -15,7 +15,7 @@ jobs:
       WRONG_USER: ${{ vars.WRONG_USER }}
       WRONG_PASSWORD: ${{ vars.WRONG_PASSWORD }}
       PRODUCTS: ${{ vars.PRODUCTS }}
-      LOCKED_OUT_USER: ${{ secrets.LOCKET_OUT_USER }}
+      LOCKED_OUT_USER: ${{ secrets.LOCKED_OUT_USER }}
       CHECKOUT_FIRST_NAME: ${{ secrets.CHECKOUT_FIRST_NAME }}
       CHECKOUT_LAST_NAME: ${{ secrets.CHECKOUT_LAST_NAME }}
       CHECKOUT_POSTAL_CODE: ${{ secrets.CHECKOUT_POSTAL_CODE }}
