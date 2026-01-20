@@ -65,7 +65,7 @@ test.describe('inventory test', () => {
         expect(prices).toEqual(expectedSortedPrices);
     });
 
-    test.only('Cart badge updates when removing an item from the inventory page', async ({ page }) => {
+    test('Cart badge updates when removing an item from the inventory page', async ({ page }) => {
         const Inventory = new InventoryPage(page)
         await Inventory.AddItemToCart(env.products[0])
         await Inventory.AddItemToCart(env.products[2])
