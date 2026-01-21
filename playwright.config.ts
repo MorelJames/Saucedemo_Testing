@@ -10,25 +10,29 @@ dotenv.config({ path: './.env', override: true });
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+const isProblematic = process.env.CI && process.env.GITHUB_REF_NAME === 'problem_user'
 export default defineConfig({
   testDir: './tests',
-  /* Run tests in files in parallel */
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  retries: isProblematic ? 0 : 1,
+  timeout: isProblematic ? 15_000 : 30_000,
+  workers: process.env.CI ? 2 : undefined,
+  reporter: [['html'], ['github']],
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
+    actionTimeout: isProblematic ? 5_000 : 0,
+    navigationTimeout: isProblematic ? 10_000 : 30_000,
     baseURL: 'https://www.saucedemo.com/',
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: isProblematic ? 'retain-on-failure' : 'on-first-retry',
+    video: isProblematic ? 'retain-on-failure' : 'on-first-retry',
+    screenshot:'only-on-failure',
+    viewport: { width: 1280, height: 720 },
+  },
+  expect: {
+    timeout: isProblematic ? 3_000 : 5_000,
+    toMatchSnapshot: {
+      maxDiffPixelRatio: 0.05,
+    },
   },
 
   /* Configure projects for major browsers */
@@ -47,32 +51,5 @@ export default defineConfig({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
   ],
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 });
