@@ -16,9 +16,12 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: isProblematic ? 0 : 1,
+  timeout: isProblematic ? 15_000 : 30_000,
   workers: process.env.CI ? 2 : undefined,
   reporter: [['html'], ['github']],
   use: {
+    actionTimeout: isProblematic ? 5_000 : 0,
+    navigationTimeout: isProblematic ? 10_000 : 30_000,
     baseURL: 'https://www.saucedemo.com/',
     trace: isProblematic ? 'retain-on-failure' : 'on-first-retry',
     video: isProblematic ? 'retain-on-failure' : 'on-first-retry',
@@ -26,6 +29,7 @@ export default defineConfig({
     viewport: { width: 1280, height: 720 },
   },
   expect: {
+    timeout: isProblematic ? 3_000 : 5_000,
     toMatchSnapshot: {
       maxDiffPixelRatio: 0.05,
     },
