@@ -10,12 +10,13 @@ dotenv.config({ path: './.env', override: true });
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+const isProblematic = process.env.CI && process.env.GITHUB_REF_NAME === 'problematic-users'
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  retries: isProblematic ? 0 : 1,
+  workers: process.env.CI ? 2 : undefined,
   reporter: [['html'], ['github']],
   use: {
     baseURL: 'https://www.saucedemo.com/',
