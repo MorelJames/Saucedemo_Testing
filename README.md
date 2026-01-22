@@ -90,7 +90,6 @@ Open it locally
 npx playwright show-report
 ```
 ## Traces
-Traces
 Traces are generated depending on execution context and are stored under `test-results/`.
 
 You can view traces by uploading the `.zip` file to the Playwright Trace Viewer:
