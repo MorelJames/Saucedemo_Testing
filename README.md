@@ -112,7 +112,7 @@ This works for both local runs and CI artifacts.
 ## Additional documentation 
 More detailed documentation is available in the `docs` folder:
 
-- docs/test-strategy.md
-- docs/test-cases.md
-- docs/reporting.md
-- docs/branch-policy.md
+- [docs/test-strategy.md](./docs/test-strategy.md)
+- [docs/test-cases.md](./docs/test-cases.md)
+- [docs/reporting.md](./docs/reporting.md)
+- [docs/branch-policy.md](./docs/branch-policy.md)
