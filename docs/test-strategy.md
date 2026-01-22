@@ -1,48 +1,13 @@
-# Test Strategy 
+## Testing strategy
 
-## Objective
-Create a maintainable and reliable automated E2E test suite for Saucedemo that validates expected behavior and clearly exposes defects.
+The testing strategy for this project focuses on validating the main end to end user journey of the Saucedemo website through automated browser based tests. The objective is not to exhaustively test every edge case, but to cover the most critical business flows in a way that is reliable, maintainable, and easy to analyze when failures occur.
 
-## Scope
-### In scope
-- Login and logout flows
-- Inventory interactions and sorting
-- Cart behavior and persistence
-- Checkout flow and price calculation
-- Selected UI snapshot coverage
+Tests are written with the `standard_user` as the reference baseline, representing how the application is expected to behave under normal conditions. This allows the suite to act as a regression safety net and quickly highlight unexpected changes in functionality or UI behavior.
 
-### Out of scope
-- Performance testing
-- Security testing
-- Accessibility testing
-- Mobile responsive testing
+The suite is organized by functional areas (login, inventory, cart, checkout) to mirror how users interact with the application and to keep test intent clear. A Page Object Model is used to separate test logic from page behavior, improving readability and reducing maintenance cost when the application evolves.
 
-## Test types
-- End to end functional tests
-- Negative tests (invalid credentials, missing checkout info)
-- UI snapshot tests
+Multi browser execution (Chromium, Firefox, WebKit) is used to ensure consistent behavior across different rendering engines. Tests are executed in parallel to keep execution time reasonable while still providing broad coverage.
 
-## Browsers
-- Chromium
-- Firefox
-- WebKit
+A dedicated `problem_user` branch is intentionally maintained to demonstrate defect detection. In this context, failures are expected and are used to showcase the quality of reporting, traceability, and debugging artifacts produced by the automation framework. Configuration such as retries and timeouts is adjusted on this branch to ensure that failures remain visible and reproducible.
 
-## Test users
-- `standard_user`: baseline for expected behavior
-- `problem_user`: used in a dedicated branch to demonstrate defect detection
-
-## Automation approach
-- Playwright for E2E automation
-- Page Object Model for maintainability
-- Fully parallel execution
-- CI integrated execution with artifacts
-
-## Retries and timeouts
-- Default branch: 1 retry
-- `problem_user` branch: 0 retry
-- Reduced timeouts on the problematic branch to surface issues faster
-
-## Reporting
-- HTML report
-- Traces
-- Screenshots and videos on failure
+Finally, the strategy emphasizes actionable reporting. Every failure should be accompanied by clear evidence (HTML report, screenshots, traces, videos when relevant) so that issues can be understood and diagnosed without rerunning the tests locally.

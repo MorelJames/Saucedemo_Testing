@@ -52,35 +52,51 @@ User scope:
 This project uses `.env` variables via dotenv.
 
 Example `.env`:
-- USERNAME: username
-- PASSWORD: password
-- WRONG_USER: wrong_username
-- WRONG_PASSWORD: wrong_passord
-- LOCKED_OUT_USER: locked_user
-- PRODUCTS: product1,product2,product3
-- CHECKOUT_FIRST_NAME: first_name
-- CHECKOUT_LAST_NAME: last_name
-- CHECKOUT_POSTAL_CODE: postal_code
+```bash
+USERNAME=standard_user
+PASSWORD=secret_sauce
+WRONG_USER=wrong_user
+WRONG_PASSWORD=wrong_password
+LOCKED_OUT_USER=locked_out_user
+PRODUCTS=sauce-labs-backpack,sauce-labs-bike-light,sauce-labs-bolt-t-shirt,sauce-labs-fleece-jacket,sauce-labs-onesie,test.allthethings()-t-shirt-(red)
+CHECKOUT_FIRST_NAME=standard
+CHECKOUT_LAST_NAME=user
+CHECKOUT_POSTAL_CODE=myAwesomePostalCode9999
+```
+The values shown above are example credentials provided by the Saucedemo website and correspond to the `standard_user`.
 
 Create a local `.env` file at repo root (do not commit secrets).
 
 ## Install and run
 ### Install dependencies
 ```bash
-npm install
+npm ci install
+npx playwright install
 ```
 ### Run all tests
 ```bash
-npx playwright test
+npm run test
 ```
 ### Run with UI
 ```bash
-npx playwright test --ui
+npm run test:ui
 ```
 ### Run a specific file
 ```bash
-npx playwright test tests/login.spec.ts
+npm run test tests/login.spec.ts
 ```
+### Updating snapshot references
+
+This project includes UI snapshot tests.
+
+If you are running the project for the first time, the reference images for snapshots may be missing.  
+In this case, tests comparing snapshots will fail until the reference images are generated.
+
+To generate or update snapshot reference images, run:
+```bash
+npm run update:snapshots
+```
+
 ## Reports and debugging
 After a run, an HTML report is generated under:
 - playwright-report/
